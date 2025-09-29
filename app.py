@@ -1,7 +1,6 @@
 import os, json, requests
 from flask import Flask, request
 from dotenv import load_dotenv
-from openai import OpenAI  # IA opcional
 
 load_dotenv()
 app = Flask(__name__)
@@ -10,16 +9,12 @@ app = Flask(__name__)
 VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 WHATSAPP_TOKEN = os.getenv("WHATSAPP_TOKEN")
 PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 GRAPH_URL = f"https://graph.facebook.com/v20.0/{PHONE_NUMBER_ID}/messages"
 HEADERS = {"Authorization": f"Bearer {WHATSAPP_TOKEN}", "Content-Type": "application/json"}
 
-# Cliente OpenAI (opcional)
-client = OpenAI(api_key=OPENAI_API_KEY)
-
-# Estados por usuario
-user_states = {}
+# URL del Google Form
+FORM_URL = "https://forms.gle/uutX4rXkh1LXqUXe9"
 
 
 # ✅ Verificación del webhook
@@ -49,23 +44,6 @@ def send_text(to_number: str, text: str):
     return r.json()
 
 
-# ✅ Generar respuesta IA (opcional)
-def ai_response(prompt: str) -> str:
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "Sos un asistente útil y simpático."},
-                {"role": "user", "content": prompt}
-            ],
-            max_tokens=200
-        )
-        return response.choices[0].message.content.strip()
-    except Exception as e:
-        print("⚠️ Error en IA:", e)
-        return "Lo siento, hubo un error con el asistente de IA."
-
-
 # ✅ Webhook para mensajes entrantes
 @app.post("/webhook")
 def incoming():
@@ -80,14 +58,14 @@ def incoming():
 
         if messages:
             msg = messages[0]
-            from_msisdn = msg["from"]  # 👈 SIEMPRE respondemos a quien escribió
+            from_msisdn = msg["from"]  # 👈 Número del cliente
             text = (msg.get("text") or {}).get("body", "").strip().lower()
 
             # 👉 Menú inicial
             if text in ["hola", "menu", "opciones", "hi"]:
                 menu = (
-                    "👋 Hola, soy el asistente automático.\n"
-                    "Elegí una opción:\n\n"
+                    "👋 ¡Hola! Soy el asistente automático de Seguros.\n\n"
+                    "Por favor seleccioná una opción:\n"
                     "1️⃣ Seguro Delivery Moto\n"
                     "2️⃣ Seguro Moto\n"
                     "3️⃣ Hablar con un asesor"
@@ -96,22 +74,20 @@ def incoming():
 
             elif text == "1":
                 send_text(from_msisdn,
-                          "🚀 Para darte más info sobre *Seguro Delivery Moto* necesito:\n"
-                          "- Marca\n- Modelo\n- Año\n- Código Postal")
+                          f"🚀 Para avanzar con *Seguro Delivery Moto*, completá este formulario:\n{FORM_URL}")
 
             elif text == "2":
                 send_text(from_msisdn,
-                          "🏍️ Para darte más info sobre *Seguro Moto* necesito:\n"
-                          "- Marca\n- Modelo\n- Año\n- Código Postal")
+                          f"🏍️ Para avanzar con *Seguro Moto*, completá este formulario:\n{FORM_URL}")
 
             elif text == "3":
                 send_text(from_msisdn,
-                          "📞 En unos minutos un asesor se va a contactar con vos.")
+                          "📞 Un asesor se pondrá en contacto con vos en breve. ¡Gracias por confiar en nosotros!")
 
             else:
-                # 👉 Si no coincide con opciones → IA
-                respuesta = ai_response(text)
-                send_text(from_msisdn, respuesta)
+                # 👉 Respuesta por defecto si no entiende la opción
+                send_text(from_msisdn,
+                          "🤔 No entendí tu respuesta.\nEscribí *menu* para ver las opciones disponibles.")
 
     except Exception as e:
         print("⚠️ Error procesando webhook:", e)
