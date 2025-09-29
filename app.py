@@ -64,25 +64,27 @@ def incoming():
             # 👉 Menú inicial
             if text in ["hola", "menu", "opciones", "hi"]:
                 menu = (
-                    "👋 ¡Hola! Soy el asistente automático de Seguros.\n\n"
-                    "Por favor seleccioná una opción:\n"
-                    "1️⃣ Seguro Delivery Moto\n"
-                    "2️⃣ Seguro Moto\n"
-                    "3️⃣ Hablar con un asesor"
+                    "👋 ¡Hola! Soy el asistente virtual de *Moto Delivery* 🚀\n\n"
+                    "Estoy acá para ayudarte a encontrar el seguro que mejor se adapte a vos.\n"
+                    "Elegí una de estas opciones:\n\n"
+                    "1️⃣ Cotizar Seguro Delivery Moto 🛵\n"
+                    "2️⃣ Cotizar Seguro Moto 🏍️\n"
+                    "3️⃣ Hablar con un asesor 👨‍💼"
                 )
                 send_text(from_msisdn, menu)
 
             elif text == "1":
                 send_text(from_msisdn,
-                          f"🚀 Para avanzar con *Seguro Delivery Moto*, completá este formulario:\n{FORM_URL}")
+                          f"🛵 ¡Genial! Para avanzar con *Seguro Delivery Moto* por favor completá este formulario con tus datos:\n{FORM_URL}")
 
             elif text == "2":
                 send_text(from_msisdn,
-                          f"🏍️ Para avanzar con *Seguro Moto*, completá este formulario:\n{FORM_URL}")
+                          f"🏍️ Perfecto. Para avanzar con *Seguro Moto* por favor completá este formulario con tus datos:\n{FORM_URL}")
 
             elif text == "3":
                 send_text(from_msisdn,
-                          "📞 Un asesor se pondrá en contacto con vos en breve. ¡Gracias por confiar en nosotros!")
+                          f"👨‍💼 Un asesor se pondrá en contacto con vos muy pronto.\n\n"
+                          f"👉 Para que pueda ayudarte lo mejor posible, completá este formulario con tus datos:\n{FORM_URL}")
 
             else:
                 # 👉 Respuesta por defecto si no entiende la opción
