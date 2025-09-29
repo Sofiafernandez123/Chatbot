@@ -62,7 +62,7 @@ def incoming():
             text = (msg.get("text") or {}).get("body", "").strip().lower()
 
             # 👉 Menú inicial
-            if text in ["hola", "menu", "opciones", "hi"]:
+            if text in ["hola", "menu", "opciones", "hi","Hola","HOLA", "Buenas", "Buenas tardes", "Buenas noches", "Buen dia","Menu","Menú" ]:
                 menu = (
                     "👋 ¡Hola! Soy el asistente virtual de *Moto Delivery* 🚀\n\n"
                     "Estoy acá para ayudarte a encontrar el seguro que mejor se adapte a vos.\n"
